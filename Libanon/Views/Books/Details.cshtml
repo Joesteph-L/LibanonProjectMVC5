@@ -1,0 +1,74 @@
+﻿@model Libanon.Models.Book
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Details</title>
+</head>
+<body>
+    <div>
+        <h4>Book</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Image)
+            </dt>
+    
+            <dd>
+                <img src="/Books/RetrieveImage/@Model.ISBN" alt="" height=100 width=200 />
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Title)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Title)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Author)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Author)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.ReleaseDate)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.ReleaseDate)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Language)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Language)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.State)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.State)
+            </dd>
+    
+        </dl>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.ISBN }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+</body>
+</html>
