@@ -8,7 +8,7 @@ namespace Libanon.Models
 {
     public class Book
     {
-        [Key]
+        //Properties of a book
         public int ISBN { get; set; }
         public string Title { get; set; }
         public string Author { get; set; }
@@ -16,6 +16,7 @@ namespace Libanon.Models
         public string Language { get; set; }
         public string State { get; set; }
 
+        //Reference Navigation Property
         public virtual Image Image { get; set; }
     }
 }

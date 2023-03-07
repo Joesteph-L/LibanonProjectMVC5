@@ -7,15 +7,20 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using Libanon.ConnectConfig;
 using Libanon.Models;
 using Libanon.Controllers;
+using Libanon.Repository;
 
 namespace Libanon.Controllers
 {
     public class BooksController : Controller
     {
         private LibanonDbContext db = new LibanonDbContext();
+        readonly IBookRepository bookRepository;
+        public BooksController(IBookRepository BookRepository)
+        {
+            bookRepository = BookRepository;
+        }
 
         public ActionResult RetrieveImage(int id)
         {
@@ -32,7 +37,8 @@ namespace Libanon.Controllers
 
         public Image GetImageByISBN(int ISBN)
         {
-            var q = from temp in db.Images where temp.Book.ISBN == ISBN select temp;
+            //var q = from temp in db.Images where temp.Book.ISBN == ISBN select temp;
+            var q = db.Images.Where(i => i.Book.ISBN == ISBN);
             return q.FirstOrDefault();
         }
 
@@ -57,7 +63,8 @@ namespace Libanon.Controllers
         
         public ActionResult Index()
         {
-            return View(db.Books.ToList());
+            List<Book> ListBooks = bookRepository.GetAll().ToList();
+            return View(ListBooks);
         }
 
         
@@ -83,23 +90,25 @@ namespace Libanon.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Book book)
+        public ActionResult Create(Book newBook)
         {
             HttpPostedFileBase file = Request.Files["ImageData"];
 
-            book.Image = new Image
+            newBook.Image = new Image
             {
-                ImageName = "Picture - " + book.Title + "Author - " + book.Author,
+                ImageName = "Picture - " + newBook.Title + "Author - " + newBook.Author,
                 ImageBinary = ConvertToBytes(file),
                 Type = "Book",
-                Book = book
+                Book = newBook
             };
-
-            book.State = "Awaiting";
+            var book = new Book();
             if (ModelState.IsValid)
             {
-                db.Books.Add(book);
-                db.SaveChanges();
+                book = bookRepository.AddNew(newBook);
+            }
+            else
+            {
+                return HttpNotFound();
             }
 
             return View(book);
@@ -117,31 +126,37 @@ namespace Libanon.Controllers
             {
                 return HttpNotFound();
             }
+            
+
             return View(book);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(Book book)
+        public ActionResult Edit(Book tagetBook)
         {
             HttpPostedFileBase file = Request.Files["ImageData"];
-            var newBook = book;
-
-            var newImage = GetImageByISBN(book.ISBN);
-            newImage.ImageBinary = ConvertToBytes(file);
-                
             
+
+            var newImage = GetImageByISBN(tagetBook.ISBN);
+            newImage.ImageBinary = ConvertToBytes(file);
+
+            var book = new Book();
             if (ModelState.IsValid)
             {
-                db.Entry(newBook).State = EntityState.Modified;
                 db.Entry(newImage).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                bookRepository.Update(tagetBook);
             }
+            else
+            {
+                return HttpNotFound();
+            }
+
             return View(book);
         }
 
-        // GET: Books/Delete/5
+       
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -156,14 +171,14 @@ namespace Libanon.Controllers
             return View(book);
         }
 
-        // POST: Books/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Book book = db.Books.Find(id);
-            db.Books.Remove(book);
-            db.SaveChanges();
+            if (!bookRepository.Delete(id))
+            {
+                return HttpNotFound();
+            }
             return RedirectToAction("Index");
         }
 

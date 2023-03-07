@@ -6,7 +6,7 @@ using System.Data.Entity;
 using Libanon.Models;
 using Libanon.Models.Connect_EF_Config;
 
-namespace Libanon.ConnectConfig
+namespace Libanon.Models
 {
     public class LibanonDbContext:DbContext
     {
