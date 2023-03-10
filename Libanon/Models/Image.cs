@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿
 
 namespace Libanon.Models
 {
@@ -15,6 +11,8 @@ namespace Libanon.Models
         public int? ImageHeight { get; set; }
         public string Type { get; set; }
 
+
+        public int? BookISBN { get; set; }
         public virtual Book Book { get; set; }
     }
 }

@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Web;
 
 namespace Libanon.Repository
 {
@@ -91,9 +90,9 @@ namespace Libanon.Repository
             bool result = false;
             Book book = _DbContext.Books.Find(id);
             _DbContext.Books.Remove(book);
-            _DbContext.SaveChanges();
+            int i = _DbContext.SaveChanges();
 
-            if (_DbContext.Entry(book).State == EntityState.Deleted)
+           if(i != 0)
             {
                 result = true;
             }

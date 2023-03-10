@@ -1,4 +1,4 @@
-﻿using System;
+﻿
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -8,7 +8,6 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Libanon.Models;
-using Libanon.Controllers;
 using Libanon.Repository;
 
 namespace Libanon.Controllers
@@ -17,14 +16,17 @@ namespace Libanon.Controllers
     {
         private LibanonDbContext db = new LibanonDbContext();
         readonly IBookRepository bookRepository;
-        public BooksController(IBookRepository BookRepository)
+        readonly IImageRepository imageRepository;
+        public BooksController(IBookRepository bookRepository, IImageRepository imageRepository)
         {
-            bookRepository = BookRepository;
+            this.bookRepository = bookRepository;
+            this.imageRepository = imageRepository;
         }
 
-        public ActionResult RetrieveImage(int id)
+        public ActionResult RetrieveImage(int? id)
         {
-            byte[] cover = GetImageFromDataBase(id);
+            //var book = bookRepository.GetDetail(ISBN);
+            byte[] cover = imageRepository.GetImage(id).ImageBinary;
             if (cover != null)
             {
                 return File(cover, "image/jpg");
@@ -34,33 +36,7 @@ namespace Libanon.Controllers
                 return null;
             }
         }
-
-        public Image GetImageByISBN(int ISBN)
-        {
-            //var q = from temp in db.Images where temp.Book.ISBN == ISBN select temp;
-            var q = db.Images.Where(i => i.Book.ISBN == ISBN);
-            return q.FirstOrDefault();
-        }
-
-        public byte[] GetImageFromDataBase(int Id)
-        {
-            //var q = from temp in db.Images where temp.Book.ISBN == Id select temp.ImageBinary;
-            var q = GetImageByISBN(Id).ImageBinary;
-            byte[] cover = q;
-            return cover;
-        }
-
-        
-
-        public byte[] ConvertToBytes(HttpPostedFileBase image)
-        {
-            byte[] imageBytes = null;
-            BinaryReader reader = new BinaryReader(image.InputStream);
-            imageBytes = reader.ReadBytes((int)image.ContentLength);
-            return imageBytes;
-        }
-
-        
+       
         public ActionResult Index()
         {
             List<Book> ListBooks = bookRepository.GetAll().ToList();
@@ -93,25 +69,19 @@ namespace Libanon.Controllers
         public ActionResult Create(Book newBook)
         {
             HttpPostedFileBase file = Request.Files["ImageData"];
-
-            newBook.Image = new Image
-            {
-                ImageName = "Picture - " + newBook.Title + "Author - " + newBook.Author,
-                ImageBinary = ConvertToBytes(file),
-                Type = "Book",
-                Book = newBook
-            };
-            var book = new Book();
+            var image = imageRepository.SetImage(file, newBook);
+            newBook.ImagesList.Add(image);
+            
             if (ModelState.IsValid)
             {
-                book = bookRepository.AddNew(newBook);
+                bookRepository.AddNew(newBook);
             }
             else
             {
                 return HttpNotFound();
             }
 
-            return View(book);
+            return RedirectToAction("Index");
         }
 
         // GET: Books/Edit/5
@@ -135,17 +105,13 @@ namespace Libanon.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(Book tagetBook)
         {
-            HttpPostedFileBase file = Request.Files["ImageData"];
+            HttpPostedFileBase file = Request.Files["ImageData"];                                                                                                                                                                                                                                                             
+
             
-
-            var newImage = GetImageByISBN(tagetBook.ISBN);
-            newImage.ImageBinary = ConvertToBytes(file);
-
-            var book = new Book();
             if (ModelState.IsValid)
             {
-                db.Entry(newImage).State = EntityState.Modified;
-                db.SaveChanges();
+                var image = imageRepository.GetImage(tagetBook.ISBN);
+                imageRepository.Update(image, file);
                 bookRepository.Update(tagetBook);
             }
             else
@@ -153,7 +119,7 @@ namespace Libanon.Controllers
                 return HttpNotFound();
             }
 
-            return View(book);
+            return RedirectToAction("Index");
         }
 
        

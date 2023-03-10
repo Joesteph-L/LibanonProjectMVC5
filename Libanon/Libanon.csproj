@@ -145,6 +145,10 @@
     <Compile Include="Migrations\202302150708401_LibanonDb-V2.designer.cs">
       <DependentUpon>202302150708401_LibanonDb-V2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202303101052472_LibanonDb-V3.cs" />
+    <Compile Include="Migrations\202303101052472_LibanonDb-V3.designer.cs">
+      <DependentUpon>202303101052472_LibanonDb-V3.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Connect_EF_Config\BookEntityConfiguration.cs" />
     <Compile Include="Models\Connect_EF_Config\ImageEntityConfiguration.cs" />
     <Compile Include="Models\LibanonDbContext.cs" />
@@ -234,6 +238,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202302150708401_LibanonDb-V2.resx">
       <DependentUpon>202302150708401_LibanonDb-V2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202303101052472_LibanonDb-V3.resx">
+      <DependentUpon>202303101052472_LibanonDb-V3.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

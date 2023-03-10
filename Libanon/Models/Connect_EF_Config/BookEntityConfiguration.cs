@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
-using System.Linq;
-using System.Web;
+﻿using System.Data.Entity.ModelConfiguration;
 
 namespace Libanon.Models.Connect_EF_Config
 {
@@ -13,9 +9,10 @@ namespace Libanon.Models.Connect_EF_Config
             this.ToTable("Books");
             this.HasKey<int>(b => b.ISBN);
 
-            this.HasOptional(b => b.Image)
-                .WithOptionalPrincipal(i => i.Book)
-                .WillCascadeOnDelete(true);
+            this.HasMany<Image>(b => b.ImagesList)
+                .WithRequired(i => i.Book)
+                .HasForeignKey<int?>(i => i.BookISBN)
+                .WillCascadeOnDelete();
         }
     }
 }

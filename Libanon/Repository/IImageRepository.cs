@@ -1,17 +1,16 @@
 ﻿using Libanon.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Web;
 
 namespace Libanon.Repository
 {
     public interface IImageRepository
     {
         Image AddNew(Image newImage);
+        Image SetImage(HttpPostedFileBase file, Book newBook);
         IEnumerable<Image> GetAll();
-        Image GetImage(int id);
+        Image GetImage(int? i);
+        Image Update(Image image, HttpPostedFileBase file);
         Image Delete(int id);
     }
 }

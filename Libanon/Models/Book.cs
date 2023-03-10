@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
 
 namespace Libanon.Models
 {
@@ -17,6 +14,10 @@ namespace Libanon.Models
         public string State { get; set; }
 
         //Reference Navigation Property
-        public virtual Image Image { get; set; }
+        public virtual ICollection<Image> ImagesList { get; set; }
+        public Book()
+        {
+            ImagesList = new List<Image>();
+        }
     }
 }
