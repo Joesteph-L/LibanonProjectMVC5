@@ -36,7 +36,7 @@ namespace Libanon.Repository
             {
                 image = new Image
                 {
-                    ImageName = "Picture - " + newBook.Title + "Author - " + newBook.Author,
+                    ImageName = "Picture - " + newBook.Title + "Author - " + newBook.Author + file.FileName,
                     ImageBinary = ConvertToBytes(file),
                     Type = "Book",
                     BookISBN = newBook.ISBN
@@ -74,6 +74,7 @@ namespace Libanon.Repository
             else
             {
                 image.ImageBinary = ConvertToBytes(file);
+                image.ImageName = "Picture - " + image.Book.Title + "Author - " + image.Book.Author + file.FileName;
 
                 _DbContext.Entry(image).State = EntityState.Modified;
                 _DbContext.SaveChanges();

@@ -110,8 +110,12 @@ namespace Libanon.Controllers
             
             if (ModelState.IsValid)
             {
-                var image = imageRepository.GetImage(tagetBook.ISBN);
-                imageRepository.Update(image, file);
+                if(file.ContentLength > 0)
+                {
+                    var image = imageRepository.GetImage(tagetBook.ISBN);
+                    imageRepository.Update(image, file);
+                }
+                
                 bookRepository.Update(tagetBook);
             }
             else
