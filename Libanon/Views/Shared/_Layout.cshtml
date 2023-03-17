@@ -26,7 +26,27 @@
                     <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
                     <li>@Html.ActionLink("Books", "Index", "Books")</li>
                 </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="#" onclick="location.href='@Url.Action("SignUp", "Account")'">
+                            <span class="glyphicon glyphicon-user"></span> Register
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#" onclick="location.href='@Url.Action("Login", "Account")'">
+                            <span class="glyphicon glyphicon-log-in"></span> Login
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#" onclick="location.href='@Url.Action("LogOff", "Account")'">
+                            <span class="glyphicon glyphicon-log-in"></span> LogOut
+                        </a>
+                    </li>
+                </ul>
             </div>
+            
         </div>
     </div>
     <div class="container body-content">

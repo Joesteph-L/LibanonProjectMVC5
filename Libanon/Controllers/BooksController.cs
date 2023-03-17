@@ -12,6 +12,7 @@ using Libanon.Repository;
 
 namespace Libanon.Controllers
 {
+    [Authorize]
     public class BooksController : Controller
     {
         private LibanonDbContext db = new LibanonDbContext();
