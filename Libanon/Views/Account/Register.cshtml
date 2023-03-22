@@ -1,18 +1,18 @@
-﻿@model Libanon.Models.SignupModel
+﻿@model Libanon.Models.SignupViewModel
 
 @{
-    ViewBag.Title = "SignUp";
+    ViewBag.Title = "Register";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>SignUp</h2>
+<h2>Register</h2>
 
 @using (Html.BeginForm()) 
 {
     @Html.AntiForgeryToken()
     
     <div class="form-horizontal">
-        <h4>SignupModel</h4>
+        <h4>SignupViewModel</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">

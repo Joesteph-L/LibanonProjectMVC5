@@ -1,5 +1,6 @@
 ﻿using Firebase.Auth;
 using Libanon.Models;
+using Libanon.Repository;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using System;
@@ -13,18 +14,24 @@ namespace Libanon.Controllers
 {
     public class AccountController : Controller
     {
+        readonly IUserRepository userRepository;
+        public AccountController(IUserRepository userRepository)
+        {
+            this.userRepository = userRepository;
+        }
+
 
         private static string ApiKey = "AIzaSyDZFDZFl9_hbt3O-uGTLhYlDCqYCfxjFsw";
-        private static string Bucket = "libanon-mvc5-default-rtdb.asia-southeast1.firebasedatabase.app";
+        //private static string Bucket = "libanon-mvc5-default-rtdb.asia-southeast1.firebasedatabase.app";
         
         [HttpGet]
-        public ActionResult SignUp()
+        public ActionResult Register()
         {
             return View();  
         }
         
         [HttpPost]
-        public async Task<ActionResult> SignUp(SignupModel model)
+        public async Task<ActionResult> Register(SignupViewModel model)
         {
             try
             {
@@ -32,6 +39,14 @@ namespace Libanon.Controllers
 
                 var a = await auth.CreateUserWithEmailAndPasswordAsync(model.Email,model.Password,model.Name,true);
                 ModelState.AddModelError(string.Empty, "Please Verify your email then login, plz!!");
+                userRepository.AddNew(
+                    new Models.User 
+                    {
+                        Id = a.User.LocalId,
+                        Name = model.Name,
+                        Mail = model.Email 
+                    }
+                );
             }
             catch (Exception ex)
             {
@@ -74,11 +89,16 @@ namespace Libanon.Controllers
                     
                     string token = ab.FirebaseToken;
                     var user = ab.User;
+                    
                     if (token != "")
                     {
 
-                        this.SignInUser(user.Email, token, false);
-                        return this.RedirectToLocal(returnUrl);
+                        SignInUser(user.Email, token, false);
+                        if(returnUrl == null)
+                        {
+                            returnUrl = "/Home";
+                        }
+                        return RedirectToLocal(returnUrl);
 
                     }
                     else

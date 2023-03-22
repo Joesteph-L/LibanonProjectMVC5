@@ -17,11 +17,13 @@ namespace Libanon.Models
 
         public DbSet<Book> Books { get; set; }
         public DbSet<Image> Images { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Configurations.Add(new BookEntityConfiguration());
             modelBuilder.Configurations.Add(new ImageEntityConfiguration());
+            modelBuilder.Configurations.Add(new UserEntityConfiguration());
         }
     }
 }

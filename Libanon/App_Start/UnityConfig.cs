@@ -17,6 +17,7 @@ namespace Libanon
 
             container.RegisterType<IBookRepository,BookRepository>();
             container.RegisterType<IImageRepository, ImageRepository>();
+            container.RegisterType<IUserRepository, UserRepository>();
 
             DependencyResolver.SetResolver(new UnityDependencyResolver(container));
         }

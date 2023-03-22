@@ -1,8 +1,4 @@
-﻿
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -15,7 +11,6 @@ namespace Libanon.Controllers
     [Authorize]
     public class BooksController : Controller
     {
-        private LibanonDbContext db = new LibanonDbContext();
         readonly IBookRepository bookRepository;
         readonly IImageRepository imageRepository;
         public BooksController(IBookRepository bookRepository, IImageRepository imageRepository)
@@ -26,7 +21,7 @@ namespace Libanon.Controllers
 
         public ActionResult RetrieveImage(int? id)
         {
-            //var book = bookRepository.GetDetail(ISBN);
+            
             byte[] cover = imageRepository.GetImage(id).ImageBinary;
             if (cover != null)
             {
@@ -37,21 +32,22 @@ namespace Libanon.Controllers
                 return null;
             }
         }
-       
+
+        [HttpGet]
         public ActionResult Index()
         {
             List<Book> ListBooks = bookRepository.GetAll().ToList();
             return View(ListBooks);
         }
 
-        
+        [HttpGet]
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Book book = db.Books.Find(id);
+            Book book = bookRepository.GetDetail(id);
             if (book == null)
             {
                 return HttpNotFound();
@@ -59,7 +55,7 @@ namespace Libanon.Controllers
             return View(book);
         }
 
-        
+        [HttpGet]
         public ActionResult Create()
         {
             return View();
@@ -85,14 +81,14 @@ namespace Libanon.Controllers
             return RedirectToAction("Index");
         }
 
-        // GET: Books/Edit/5
+        [HttpGet]
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Book book = db.Books.Find(id);
+            Book book = bookRepository.GetDetail(id);
             if (book == null)
             {
                 return HttpNotFound();
@@ -127,14 +123,14 @@ namespace Libanon.Controllers
             return RedirectToAction("Index");
         }
 
-       
+        [HttpGet]
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Book book = db.Books.Find(id);
+            Book book = bookRepository.GetDetail(id);
             if (book == null)
             {
                 return HttpNotFound();
@@ -153,13 +149,13 @@ namespace Libanon.Controllers
             return RedirectToAction("Index");
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+        //protected override void Dispose(bool disposing)
+        //{
+        //    if (disposing)
+        //    {
+        //        db.Dispose();
+        //    }
+        //    base.Dispose(disposing);
+        //}
     }
 }
