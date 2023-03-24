@@ -99,7 +99,6 @@ namespace Libanon.Controllers
                             returnUrl = "/Home";
                         }
                         return RedirectToLocal(returnUrl);
-
                     }
                     else
                     {

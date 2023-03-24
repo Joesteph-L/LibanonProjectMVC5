@@ -1,54 +1,50 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNet.Identity
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - My ASP.NET Application</title>
     @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/bootstrap")
     @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/hepler")
 </head>
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
-                    <li>@Html.ActionLink("Books", "Index", "Books")</li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <a href="#" onclick="location.href='@Url.Action("Register", "Account")'">
-                            <span class="glyphicon glyphicon-user"></span> Register
-                        </a>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            @Html.ActionLink("Libanon", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="@Url.Action("Index", "Home")">Home</a>
                     </li>
-
-                    <li>
-                        <a href="#" onclick="location.href='@Url.Action("Login", "Account")'">
-                            <span class="glyphicon glyphicon-log-in"></span> Login
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="#" onclick="location.href='@Url.Action("LogOff", "Account")'">
-                            <span class="glyphicon glyphicon-log-in"></span> LogOut
-                        </a>
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Index", "Books")">Books</a>
                     </li>
                 </ul>
+
+                <div class="d-flex ">
+
+                    @if (Request.IsAuthenticated)
+                    {
+                        <button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("LogOff", "Account")'">Logout</button>
+
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-primary me-1" onclick="location.href='@Url.Action("Login", "Account")'">Login</button>
+                        <button type="button" class="btn btn-outline-primary" onclick="location.href='@Url.Action("Register", "Account")'">Register</button>
+                    }
+                </div>
             </div>
-            
         </div>
-    </div>
+    </nav>
+
     <div class="container body-content">
         @RenderBody()
         <hr />
@@ -56,9 +52,7 @@
             <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
         </footer>
     </div>
-
     @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
 </body>
 </html>
