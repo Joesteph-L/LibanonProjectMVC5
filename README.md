@@ -8,3 +8,4 @@ Using:
 + MS SQL Database
 + Unity container
 + Bootstrap
++ Firebase authentication
