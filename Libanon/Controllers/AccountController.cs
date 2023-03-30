@@ -1,5 +1,4 @@
-﻿using Firebase.Auth;
-using Libanon.Models;
+﻿using Libanon.Models;
 using Libanon.Repository;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
@@ -14,15 +13,14 @@ namespace Libanon.Controllers
 {
     public class AccountController : Controller
     {
-        readonly IUserRepository userRepository;
-        public AccountController(IUserRepository userRepository)
+        readonly IAuthFirebaseService _authFirebaseService;
+        readonly IUserRepository _userRepository;
+        public AccountController(IUserRepository userRepository, IAuthFirebaseService authFirebaseService)
         {
-            this.userRepository = userRepository;
+            _userRepository = userRepository;
+            _authFirebaseService = authFirebaseService;
         }
-
-
-        private static string ApiKey = "AIzaSyDZFDZFl9_hbt3O-uGTLhYlDCqYCfxjFsw";
-        //private static string Bucket = "libanon-mvc5-default-rtdb.asia-southeast1.firebasedatabase.app";
+        
         
         [HttpGet]
         public ActionResult Register()
@@ -35,16 +33,17 @@ namespace Libanon.Controllers
         {
             try
             {
-                var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
+                var auth = await _authFirebaseService.RegisterMail(model.Email, model.Password, model.Name);
 
-                var a = await auth.CreateUserWithEmailAndPasswordAsync(model.Email,model.Password,model.Name,true);
+                
+
                 ModelState.AddModelError(string.Empty, "Please Verify your email then login, plz!!");
-                userRepository.AddNew(
-                    new Models.User 
+                _userRepository.AddNew(
+                    new User
                     {
-                        Id = a.User.LocalId,
+                        Id = auth.User.LocalId,
                         Name = model.Name,
-                        Mail = model.Email 
+                        Mail = model.Email
                     }
                 );
             }
@@ -81,24 +80,30 @@ namespace Libanon.Controllers
 
             try
             {
-                // Verification.
+                //Verification.
                 if (ModelState.IsValid)
                 {
-                    var auth = new FirebaseAuthProvider(new FirebaseConfig(ApiKey));
-                    var ab = await auth.SignInWithEmailAndPasswordAsync(model.Email, model.Password);
+
+                    var auth = await _authFirebaseService.LoginMail(model.Email, model.Password);
                     
-                    string token = ab.FirebaseToken;
-                    var user = ab.User;
-                    
+                    string token = auth.FirebaseToken;
+                    var user = auth.User;
+
                     if (token != "")
                     {
-
-                        SignInUser(user.Email, token, false);
-                        if(returnUrl == null)
+                        if(user.IsEmailVerified == true)
                         {
-                            returnUrl = "/Home";
+                            SignInUser(user.Email, token, false);
+                            if (returnUrl == null)
+                            {
+                                returnUrl = "/Home";
+                            }
+                            return RedirectToLocal(returnUrl);
                         }
-                        return RedirectToLocal(returnUrl);
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Mail if not verify.");
+                        }
                     }
                     else
                     {
